@@ -2,8 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import logout
 from .models import reg, employee
-
-
+from django.contrib import messages
 
 
 def home(request):
@@ -28,9 +27,14 @@ def saveform(request):
             address=request.POST['address']
         )
         obj.save()
-        return HttpResponse("Registration Completed Successfully!")
+        messages.success(request, "Registration Completed Successfully!")
+        #return redirect('reg')
+    else:
+        messages.warning(request, "Registration Failed!")
+        #return redirect("/")
+        #return HttpResponse("Registration Completed Successfully!")
 
-    return render(request, "reg.html")
+    #return render(request, "reg.html")
 
 
 def viewstudent(request):
@@ -71,6 +75,28 @@ def login(request):
 
 
 # Login Check
+# def logincheck(request):
+#     if request.method == "POST":
+#         email = request.POST['email']
+#         password = request.POST['password']
+
+#         student = reg.objects.filter(
+#             email=email,
+#             password=password
+#         ).first()
+
+#         if student:
+#             request.session['student_id'] = student.id       #Session started 
+#             # return HttpResponse("Login Successfully!")
+#             return redirect('dashboard')
+#         else:
+#             # return HttpResponse("Login Failed!")
+#                 return redirect('login')
+    
+#     return render(request, 'login.html')
+
+
+
 def logincheck(request):
     if request.method == "POST":
         email = request.POST['email']
@@ -82,13 +108,14 @@ def logincheck(request):
         ).first()
 
         if student:
-            request.session['student_id'] = student.id       #Session started 
-            # return HttpResponse("Login Successfully!")
+            request.session['student_id'] = student.id
+            messages.success(request, "Login Successfully!")
             return redirect('dashboard')
+
         else:
-            # return HttpResponse("Login Failed!")
-                return redirect('login')
-    
+            messages.error(request, "Login Failed!")
+            return redirect('login')
+
     return render(request, 'login.html')
 
 
@@ -115,14 +142,32 @@ def logincheck(request):
 
 #     return redirect('login')
 
+# def dashboard(request):
+#     if request.session.get('student_id'):
+#         student = reg.objects.get(
+#             id=request.session.get('student_id')
+#         )
+#         messages.success(request, "Login Successfully!")
+#         return render(request, 'dashboard.html', {'data': student})
+#     else:
+#         messages.warning(request,"Login Failed!")
+#     return redirect('login')
+
 def dashboard(request):
     if request.session.get('student_id'):
         student = reg.objects.get(
             id=request.session.get('student_id')
         )
 
-        return render(request, 'dashboard.html', {'data': student})
+       # messages.success(request, "Login Successfully!")
 
+        return render(
+            request,
+            'dashboard.html',
+            {'data': student}
+        )
+
+    messages.warning(request, "Please Login First!")
     return redirect('login')
 
 # Logout
@@ -170,6 +215,15 @@ def file_upload(request):
         )
 
         emp.save()
+        messages.success(request, "File Uploded Successfully!")
+        
+        #return redirect('file')
+        
+    else:
+        messages.warning(request, "File Upload Failed!")
+        return messages.warning
+        #return redirect('/')
+
 
         return render(request, 'file.html', {
             'msg': 'File Uploaded Successfully'
@@ -183,3 +237,9 @@ def form(request):
     return render(request, 'form.html', {'p': p})
 
 from .forms import PersonForm
+
+def form(request):
+    p=PersonForm()
+    return render(request, 'form.html', {'form': p})
+        
+

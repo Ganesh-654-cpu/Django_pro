@@ -1,0 +1,61 @@
+{% comment %} {%if massages%}
+{%for i in messages%}
+<div class="alert {{i.tags}}" id="msg">
+{{i}}
+</div>
+{%endfor%}  
+{%endif%} {% endcomment %}
+
+
+{% comment %} {% if messages %}
+    {% for message in messages %}
+        <div id="msg" class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+    setTimeout(() => {
+        let d = document.getElementById("msg");
+        if (d) {
+            d.remove();
+        }
+    }, 2000);
+</script> {% endcomment %}
+
+{% if messages %}
+    {% for message in messages %}
+
+        {% if message.tags == 'success' %}
+            <div id="msg" class="alert alert-success text-center">
+                {{ message }}
+            </div>
+
+        {% elif message.tags == 'error' %}
+            <div id="msg" class="alert alert-danger text-center">
+                {{ message }}
+            </div>
+
+        {% elif message.tags == 'warning' %}
+            <div id="msg" class="alert alert-warning text-center">
+                {{ message }}
+            </div>
+
+        {% else %}
+            <div id="msg" class="alert alert-info text-center">
+                {{ message }}
+            </div>
+        {% endif %}
+
+    {% endfor %}
+{% endif %}
+
+<script>
+    setTimeout(() => {
+        let d = document.getElementById("msg");
+        if (d) {
+            d.remove();
+        }
+    }, 3000);
+</script>
